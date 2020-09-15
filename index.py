@@ -9,11 +9,12 @@ mydb = connection.connect_db()             #databaseconnection
 mycursor = mydb.cursor()
 
 class Scrape:
-    def __init__(self,quote,author,tag,qouteTag):
-        self.quotes=quote   #
+    def __init__(self,quote,author,tag,qoute_tag):
+        self.quotes=quote   #{'' }
         self.authors=author  # {'name':[id,description,dob]}
         self.tags=tag       # {'tag':id}
-        self.qouteTag=qouteTag # {'qid':tagid}
+        self.qoute_tags=qoute_tag # {'qid':tagid}
+
     def author(self,name,description,dob):
         mycursor.execute("insert into author (name,Description,DOB) values(%s,%s,%s)",(name,desc,date)) #storing to database
         author_id=mycursor.lastrowid 
@@ -28,24 +29,25 @@ class Scrape:
 
     def quote(self,quote,author_id):
         mycursor.execute("INSERT INTO quotes (quote,author_id) VALUES (%s,%s)", (quote,author_id))
-        q_id=mycursor.lastrowid 
-        self.quotes[q_id]=[quote,author_id]
-        return q_id
-    def tags1(self,tag):
+        quote_id=mycursor.lastrowid 
+        self.quotes[quote_id]=[quote,author_id]
+        return quote_id
+
+    def tags_function(self,tag):
         if tag in self.tags.keys():
             return self.tags[tag] 
         else:
             mycursor.execute("insert into tag (name) values(%s)",(tag,)) #storing to database
-            tagId=mycursor.lastrowid 
-            self.tags[tag]=tagId
-            return tagId
+            tag_id=mycursor.lastrowid 
+            self.tags[tag]=tag_id
+            return tag_id
     
     def qoute_tag(self,qoute_id,tag_id):
         mycursor.execute("insert into quote_tag (q_id,t_id) values(%s,%s)",(qoute_id,tag_id))
-        if qoute_id in self.qouteTag.keys():
-            self.qouteTag[qoute_id].append(tag_id)
+        if qoute_id in self.qoute_tags.keys():
+            self.qoute_tags[qoute_id].append(tag_id)
         else:
-            self.qouteTag[qoute_id]=[tag_id]
+            self.qoute_tags[qoute_id]=[tag_id]
 
 
     def deleteRecords(self):
@@ -54,8 +56,6 @@ class Scrape:
         mycursor.execute("DELETE FROM quote_tag")
         mycursor.execute("DELETE FROM tag")
 
-    
-    
     
     
 if __name__=="__main__":
@@ -74,40 +74,29 @@ if __name__=="__main__":
     
 
     for i in range(1,n+1):
-        print(URL)
-        for qdiv in soup.find_all('div',class_='quote'): #GETTING QOUTE DIV
-            author_name=qdiv.find('small',class_='author').text
-            authorId=scrapeobj.getAuthorId(author_name) #id or false
-            if not authorId:                                 #if id of author not found 
-                for a in qdiv.find_all('a', href=True):
+        pdb.set_trace()
+        for quote_div in soup.find_all('div',class_='quote'): #GETTING QOUTE DIV
+            author_name=quote_div.find('small',class_='author').text
+            author_id=scrapeobj.getAuthorId(author_name) #id or false
+            if not author_id:                                 #if id of author not found 
+                for a in quote_div.find_all('a', href=True):
                     if a.text=="(about)":     
                         URL="http://quotes.toscrape.com"+a['href'] 
                         page = requests.get(URL)
-                        a_soup = BeautifulSoup(page.content, 'html.parser') #getting author info
-                        name=a_soup.find('h3',class_='author-title').text
-                        desc=str(a_soup.find('div',class_='author-description').text)
-                        date=a_soup.find('span',class_='author-born-date').text
-                        authorId=scrapeobj.author(name,desc,date)
-            quote_id=scrapeobj.quote(qdiv.find('span',class_='text').text,authorId)
-            tags=qdiv.find_all('a',class_='tag')
-            for tag1 in tags:    #getting tags
-                tagId=scrapeobj.tags1(tag1.text)
-                scrapeobj.qoute_tag(quote_id,tagId)
-
-               
-
-                
+                        author_soup = BeautifulSoup(page.content, 'html.parser') #getting author info
+                        name=author_soup.find('h3',class_='author-title').text
+                        desc=str(author_soup.find('div',class_='author-description').text)
+                        date=author_soup.find('span',class_='author-born-date').text
+                        author_id=scrapeobj.author(name,desc,date)
+            quote_id=scrapeobj.quote(quote_div.find('span',class_='text').text,author_id)
+            tags=quote_div.find_all('a',class_='tag')
+            for tag in tags:    #getting tags
+                tag_id=scrapeobj.tags_function(tag.text)
+                scrapeobj.qoute_tag(quote_id,tag_id)
 
             mydb.commit()
 
-        URL="http://quotes.toscrape.com/page/"+str(i+1)
+        URL="http://quotes.toscrape.com/page/"+str(i+1) #next url to scrape
         
-        page = requests.get(URL)            #GOTO QOUTES PAGE
+        page = requests.get(URL)            
         soup = BeautifulSoup(page.content, 'html.parser') #GETTING DATA
-
-
-
-
-
-
-
