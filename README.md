@@ -1,1 +1,1 @@
-# This is a web scraper project
+# This is a web scraping project
