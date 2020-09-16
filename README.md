@@ -1,1 +1,1 @@
-# web_scraper
+# This is a web scraping project
