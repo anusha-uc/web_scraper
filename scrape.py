@@ -1,6 +1,6 @@
 import mysql.connector
 import connection
-#import pdb
+import pdb
 
 mydb = connection.connect_db()             #databaseconnection
 mycursor = mydb.cursor()
@@ -21,12 +21,14 @@ class Scrape:
 
     def getAuthorId(self,name):
         if name in self.authors:
+            
             return self.authors[name][0] 
         else:
             return False
 
     def quote(self,quote,author_id):
         if quote in self.quotes:
+           
             return self.quotes[quote][0]
         mycursor.execute("INSERT INTO quotes (quote,author_id) VALUES (%s,%s)", (quote,author_id))
         quote_id=mycursor.lastrowid
@@ -36,6 +38,7 @@ class Scrape:
 
     def tags_function(self,tag):
         if tag in self.tags:
+            
             return self.tags[tag] 
         else:
             mycursor.execute("insert into tag (name) values(%s)",(tag,)) #storing to database
@@ -45,13 +48,15 @@ class Scrape:
             return tag_id
     
     def qoute_tag(self,qoute_id,tag_id):
-        mycursor.execute("insert into quote_tag (q_id,t_id) values(%s,%s)",(qoute_id,tag_id))
-        mydb.commit()
         if qoute_id in self.qoute_tags:
-            self.qoute_tags[qoute_id].append(tag_id)
+            if tag_id not in self.qoute_tags[qoute_id]:
+                mycursor.execute("insert into quote_tag (q_id,t_id) values(%s,%s)",(qoute_id,tag_id))
+                
+                self.qoute_tags[qoute_id].append(tag_id)
         else:
             self.qoute_tags[qoute_id]=[tag_id]
-
+            mycursor.execute("insert into quote_tag (q_id,t_id) values(%s,%s)",(qoute_id,tag_id))
+        mydb.commit()
 
     # def deleteRecords(self):
     #     mycursor.execute("DELETE FROM author")
