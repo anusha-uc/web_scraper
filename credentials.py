@@ -1,8 +1,22 @@
-user_name="root"
-password=""
+class Credential:
+    def __init__(self):
+        self.user_name = "root"
+        self.password = ""
+        self.host = "localhost"
+        self.database_name = "scrape"    
+    
+    @staticmethod
+    def get_username(obj):
+        return obj.user_name
 
-def get_username():
-    return user_name
+    @staticmethod
+    def get_password(obj):
+        return obj.password
 
-def get_password():
-    return password
+    @staticmethod
+    def get_host(obj):
+        return obj.host
+
+    @staticmethod
+    def get_databaseName(obj):
+        return obj.database_name
