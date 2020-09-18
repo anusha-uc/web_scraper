@@ -77,10 +77,11 @@ def main():
     beautifulSoup_obj = BeautifulSoup(html_contents, 'html.parser')     
 
     #finds "A website" in all anchor tag and saves in the root URL
-    for anchor_tag in beautifulSoup_obj.find_all('a', href = True): 
-        if anchor_tag.text == "A website":          
-            Scrape_URL = anchor_tag['href']               
-    #getting response from the urllib2 request
+    anchor_tag=beautifulSoup_obj.find('a',text = re.compile('A website')) 
+    Scrape_URL = anchor_tag['href']
+    
+
+    #making the request 
     response = urllib2.urlopen(Scrape_URL)            
     html_contents = response.read()           
     beautifulSoup_obj = BeautifulSoup(html_contents, 'html.parser') 
@@ -94,17 +95,16 @@ def main():
             author_name = quote_div.find('small',class_ = 'author').text
             author_id = scrapeobj.getAuthorId(author_name) 
             #checks if author_id exists
-            if not author_id:                                 
-                for anchor_tag in quote_div.find_all('a', href = True):
-                    if anchor_tag.text == "(about)":     
-                        Scrape_URL = "http://quotes.toscrape.com" + anchor_tag['href'] 
-                        response = urllib2.urlopen(Scrape_URL)
-                        html_contents = response.read()
-                        author_beautifulSoup_obj = BeautifulSoup(html_contents, 'html.parser') 
-                        name = author_beautifulSoup_obj.find('h3',class_ = 'author-title').text
-                        desc = author_beautifulSoup_obj.find('div',class_ = 'author-description').text
-                        date = author_beautifulSoup_obj.find('span',class_ = 'author-born-date').text
-                        author_id = scrapeobj.author(name,desc,date)
+            if not author_id:
+                anchor_tag=quote_div.find('a', {'href': re.compile(r'^\/author\/')})
+                Scrape_URL = "http://quotes.toscrape.com" + anchor_tag['href'] 
+                response = urllib2.urlopen(Scrape_URL)
+                html_contents = response.read()
+                author_beautifulSoup_obj = BeautifulSoup(html_contents, 'html.parser') 
+                name = author_beautifulSoup_obj.find('h3',class_ = 'author-title').text
+                desc = author_beautifulSoup_obj.find('div',class_ = 'author-description').text
+                date = author_beautifulSoup_obj.find('span',class_ = 'author-born-date').text
+                author_id = scrapeobj.author(name,desc,date)
 
             quote_id = scrapeobj.quote(quote_div.find('span',class_ = 'text').text,author_id)
             tags = quote_div.find_all('a',class_ = 'tag')
