@@ -3,8 +3,8 @@ class Credential:
         self.user_name = "root"
         self.password = ""
         self.host = "localhost"
-        self.database_name = "scrape"    
-    
+        self.database_name = "scrape"
+
     @staticmethod
     def get_username(obj):
         return obj.user_name
