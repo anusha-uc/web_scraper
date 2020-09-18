@@ -75,7 +75,7 @@ class Index():
         html_contents = response.read()           
         beautifulSoup_obj = BeautifulSoup(html_contents, 'html.parser')     
 
-        #finds "A website" in all anchor tag and saves in the root URL
+        #finds url using re
         anchor_tag=beautifulSoup_obj.find('a',text = re.compile('A website')) 
         Scrape_URL = anchor_tag['href']
         
