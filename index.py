@@ -7,6 +7,8 @@ import pdb
 import scrape
 import argparse
 
+ROOT_URL = 'http://toscrape.com'
+
 class Index():
     def __init__(self):
         connectionDB_obj = connection.ConnectionDB()
@@ -69,8 +71,7 @@ class Index():
         scrapeobj = scrape.Scrape(quote_dict,author_dict,tag_dict,quoteTag_dict) 
         
         #fetching root URL
-        Scrape_URL = 'http://toscrape.com' 
-        response = urllib2.urlopen(Scrape_URL)            
+        response = urllib2.urlopen(ROOT_URL)            
         html_contents = response.read()           
         beautifulSoup_obj = BeautifulSoup(html_contents, 'html.parser')     
 
