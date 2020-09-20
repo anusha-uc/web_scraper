@@ -20,3 +20,10 @@ class Credential:
     @staticmethod
     def get_databaseName(obj):
         return obj.database_name
+# Credential
+#     |
+# connection
+#     |
+# scrape
+#     |
+# Index

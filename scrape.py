@@ -1,19 +1,61 @@
 import mysql.connector
-import connection
+from connection import ConnectionDB
 import pdb
 
 
-class Scrape:
-    def __init__(self, quote, author, tag, qoute_tag):
-        connectionDb_obj = connection.ConnectionDB()
-        self.mydb = connectionDb_obj.connect_db()
+class Scrape(ConnectionDB):
+    def __init__(self):
+        
+        ConnectionDB.__init__(self)
+        # connectionDb_obj = connection.ConnectionDB()
+        self.mydb = self.start()
         self.mycursor = self.mydb.cursor()
-        self.quotes = quote  # {'quote':[id,author_id] }
-        self.authors = author  # {'name':[id,description,dob]}
-        self.tags = tag       # {'tag':id}
-        self.qoute_tags = qoute_tag  # {'qid':tagid}
+
+        # stores value from database to dictionary
+        select_query = "SELECT * FROM author"
+        store_result = self.fetch_fromDB(select_query)
+        self.authors = {}
+        for row in store_result:
+            self.authors[row[2]] = [row[0], row[1], row[3]]
+
+        # stores value from database to dictionary
+        select_query = "SELECT * FROM tag"
+        store_result = self.fetch_fromDB(select_query)
+        self.tags = {}
+        for row in store_result:
+            self.tags[row[1]] = row[0]
+
+        # stores value from database to dictionary
+        select_query = "SELECT * FROM quotes"
+        store_result = self.fetch_fromDB(select_query)
+        self.quotes = {}
+        for row in store_result:
+            self.quotes[row[1]] = [row[0], row[2]]
+
+        # stores value from database to dictionary
+        select_query = "SELECT * FROM quote_tag"
+        store_result = self.fetch_fromDB(select_query)
+        self.qoute_tags = {}
+        for row in store_result:
+            if row[0] in self.qoute_tags:
+                self.qoute_tags[row[0]].append(row[1])
+            else:
+                self.qoute_tags[row[0]] = [row[1]]
+
+        
+        # self.quotes = quote  # {'quote':[id,author_id] }
+        # self.authors = author  # {'name':[id,description,dob]}
+        # self.tags = tag       # {'tag':id}
+        # self.qoute_tags = qoute_tag  # {'qid':tagid}
+
+      # fetches query
+    def fetch_fromDB(self, select_query):
+        self.mycursor.execute(select_query)
+        return self.mycursor.fetchall()
+
 
     # insert into author table
+
     def author(self, name, description, dob):
         self.mycursor.execute(
             "insert into author (name,Description,DOB) values(%s,%s,%s)", (name, description, dob))
