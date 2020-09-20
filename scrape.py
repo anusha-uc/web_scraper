@@ -5,7 +5,6 @@ import pdb
 
 class Scrape(ConnectionDB):
     def __init__(self):
-        
         ConnectionDB.__init__(self)
         # connectionDb_obj = connection.ConnectionDB()
         self.mydb = self.start()
@@ -41,12 +40,6 @@ class Scrape(ConnectionDB):
                 self.qoute_tags[row[0]].append(row[1])
             else:
                 self.qoute_tags[row[0]] = [row[1]]
-
-        
-        # self.quotes = quote  # {'quote':[id,author_id] }
-        # self.authors = author  # {'name':[id,description,dob]}
-        # self.tags = tag       # {'tag':id}
-        # self.qoute_tags = qoute_tag  # {'qid':tagid}
 
       # fetches query
     def fetch_fromDB(self, select_query):

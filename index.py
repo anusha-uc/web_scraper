@@ -7,70 +7,17 @@ import pdb
 from scrape import Scrape
 import argparse
 
-
 ROOT_URL = 'http://toscrape.com'
-
 
 class Index(Scrape):
     def __init__(self):
-        
-        # connectionDB_obj = connection.ConnectionDB()
-        # self.mydb = connectionDB_obj.start()
-        # self.mycursor = self.mydb.cursor()
         Scrape.__init__(self)
         # argparse
         parser = argparse.ArgumentParser(description="Find pages")
         parser.add_argument('pages', type=int, help='Number of pages to fetch')
         self.pages = parser.parse_args().pages
 
-    # returns mydb object
-    # def get_mydb(self):
-    #     return self.mydb
-
-    # # returns mycursor object
-    # def get_mycursor(self):
-    #     return self.mycursor
-
-  
     def index_main(self):
-        # mydb = self.get_mydb()
-        # mycursor = self.get_mycursor()
-
-        # # stores value from database to dictionary
-        # select_query = "SELECT * FROM author"
-        # store_result = self.fetch_fromDB(select_query)
-        # author_dict = {}
-        # for row in store_result:
-        #     author_dict[row[2]] = [row[0], row[1], row[3]]
-
-        # # stores value from database to dictionary
-        # select_query = "SELECT * FROM tag"
-        # store_result = self.fetch_fromDB(select_query)
-        # tag_dict = {}
-        # for row in store_result:
-        #     tag_dict[row[1]] = row[0]
-
-        # # stores value from database to dictionary
-        # select_query = "SELECT * FROM quotes"
-        # store_result = self.fetch_fromDB(select_query)
-        # quote_dict = {}
-        # for row in store_result:
-        #     quote_dict[row[1]] = [row[0], row[2]]
-
-        # # stores value from database to dictionary
-        # select_query = "SELECT * FROM quote_tag"
-        # store_result = self.fetch_fromDB(select_query)
-        # quoteTag_dict = {}
-        # for row in store_result:
-        #     if row[0] in quoteTag_dict:
-        #         quoteTag_dict[row[0]].append(row[1])
-        #     else:
-        #         quoteTag_dict[row[0]] = [row[1]]
-
-        # # create class object
-        # scrapeobj = scrape.Scrape(
-        #     quote_dict, author_dict, tag_dict, quoteTag_dict)
-
         # fetching root URL
         response = urllib2.urlopen(ROOT_URL)
         html_contents = response.read()
